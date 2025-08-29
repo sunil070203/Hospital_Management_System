@@ -1,13 +1,27 @@
-package com.wipro.hms.notification;
+package com.wipro.hms.notification.service;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Service;
 
-@SpringBootApplication
-public class NotificationServiceApplication {
+@Service
+public class NotificationConsumer {
 
-	public static void main(String[] args) {
-		SpringApplication.run(NotificationServiceApplication.class, args);
-	}
+    private final EmailService emailService;
+    private final SmsService smsService;
 
+    public NotificationConsumer(EmailService emailService, SmsService smsService) {
+        this.emailService = emailService;
+        this.smsService = smsService;
+    }
+
+    @KafkaListener(topics = "appointment-events", groupId = "notification-service-group")
+    public void listenAppointmentEvents(String eventMessage) {
+        // 1. Parse the message (JSON) to get patient/doctor details, message type, etc.
+        // 2. Decide whether to send SMS or Email
+        // Example:
+        // emailService.sendSimpleEmail(toEmail, subject, body);
+        // smsService.sendSms(toPhone, message);
+
+        System.out.println("Received Appointment Event: " + eventMessage);
+    }
 }
